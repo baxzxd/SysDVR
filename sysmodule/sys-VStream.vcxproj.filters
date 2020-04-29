@@ -28,6 +28,9 @@
     <ClCompile Include="source\USB\Serial.c">
       <Filter>USB</Filter>
     </ClCompile>
+    <ClCompile Include="source\USB\VideoDev.c">
+      <Filter>USB</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\grcd.h" />
@@ -55,6 +58,12 @@
     </ClInclude>
     <ClInclude Include="source\modes\defines.h">
       <Filter>modes</Filter>
+    </ClInclude>
+    <ClInclude Include="source\USB\uvc.h">
+      <Filter>USB</Filter>
+    </ClInclude>
+    <ClInclude Include="source\USB\VideoDev.h">
+      <Filter>USB</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

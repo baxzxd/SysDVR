@@ -11,19 +11,18 @@ typedef struct {
 	u32 interface, WriteEP, ReadEP;
 } UsbInterface;
 
-//typedef struct 
-//{
-//	const void* Addr;
-//	uint32_t Len;
-//} ExtraData;
+typedef struct 
+{
+	const void* Addr;
+	uint32_t Len;
+} ExtraData;
 
 typedef struct {
 	struct usb_interface_descriptor* interface_desc;
 	struct usb_endpoint_descriptor* endpoint_desc[4];
 	const char* string_descriptor;
 
-	//ExtraData ExtraDescriptors;
-	//ExtraData *ExtraEndpointDescriptors;
+	ExtraData ExtraDescriptors;
 } UsbInterfaceDesc;
 
 Result UsbCommsInitialize(struct usb_device_descriptor* device_descriptor, u32 num_interfaces, const UsbInterfaceDesc* infos);

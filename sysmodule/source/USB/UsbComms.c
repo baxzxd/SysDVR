@@ -265,6 +265,12 @@ static Result _usbCommsInterfaceInit5x(u32 intf_ind, const UsbInterfaceDesc* inf
 	rc = usbDsInterface_AppendConfigurationData(interface->interface, UsbDeviceSpeed_Full, info->interface_desc, USB_DT_INTERFACE_SIZE);
 	if (R_FAILED(rc)) return rc;
 
+	if (info->ExtraDescriptors.Addr)
+	{
+		rc = usbDsInterface_AppendConfigurationData(interface->interface, UsbDeviceSpeed_Full, info->ExtraDescriptors.Addr, info->ExtraDescriptors.Len);
+		if (R_FAILED(rc)) return rc;
+	}
+
 	for (u32 i = 0; i < interface->endpoint_number; i++)
 	{
 		if (info->endpoint_desc[i]->bmAttributes == USB_TRANSFER_TYPE_BULK)
@@ -277,6 +283,12 @@ static Result _usbCommsInterfaceInit5x(u32 intf_ind, const UsbInterfaceDesc* inf
 	rc = usbDsInterface_AppendConfigurationData(interface->interface, UsbDeviceSpeed_High, info->interface_desc, USB_DT_INTERFACE_SIZE);
 	if (R_FAILED(rc)) return rc;
 
+	if (info->ExtraDescriptors.Addr)
+	{
+		rc = usbDsInterface_AppendConfigurationData(interface->interface, UsbDeviceSpeed_High, info->ExtraDescriptors.Addr, info->ExtraDescriptors.Len);
+		if (R_FAILED(rc)) return rc;
+	}
+
 	for (u32 i = 0; i < interface->endpoint_number; i++)
 	{
 		if (info->endpoint_desc[i]->bmAttributes == USB_TRANSFER_TYPE_BULK)
@@ -288,6 +300,12 @@ static Result _usbCommsInterfaceInit5x(u32 intf_ind, const UsbInterfaceDesc* inf
 	// Super Speed Config
 	rc = usbDsInterface_AppendConfigurationData(interface->interface, UsbDeviceSpeed_Super, info->interface_desc, USB_DT_INTERFACE_SIZE);
 	if (R_FAILED(rc)) return rc;
+
+	if (info->ExtraDescriptors.Addr)
+	{
+		rc = usbDsInterface_AppendConfigurationData(interface->interface, UsbDeviceSpeed_Super, info->ExtraDescriptors.Addr, info->ExtraDescriptors.Len);
+		if (R_FAILED(rc)) return rc;
+	}
 
 	for (u32 i = 0; i < interface->endpoint_number; i++)
 	{

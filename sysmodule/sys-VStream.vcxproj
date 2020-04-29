@@ -66,6 +66,7 @@
     <ClCompile Include="source\sockUtil.c" />
     <ClCompile Include="source\USB\Serial.c" />
     <ClCompile Include="source\USB\UsbComms.c" />
+    <ClCompile Include="source\USB\VideoDev.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.nx.hint" />
@@ -84,6 +85,8 @@
     <ClInclude Include="source\sockUtil.h" />
     <ClInclude Include="source\USB\Serial.h" />
     <ClInclude Include="source\USB\UsbComms.h" />
+    <ClInclude Include="source\USB\uvc.h" />
+    <ClInclude Include="source\USB\VideoDev.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
