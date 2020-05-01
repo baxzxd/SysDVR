@@ -21,11 +21,12 @@ typedef struct PACKED {
 static VideoControlInterfaceDescriptor VCIfaceDescriptor;
 
 DECLARE_UVC_INPUT_HEADER_DESCRIPTOR(1, 1);
-DECLARE_UVC_FRAME_UNCOMPRESSED(2);
+DECLARE_UVC_FRAME_H264(1);
 
 typedef struct PACKED {
 	struct UVC_INPUT_HEADER_DESCRIPTOR(1, 1) input_header_descriptor;
-	struct uvc_format_h264 h264_payload;
+	struct uvc_format_h264 h264_format;
+	struct UVC_FRAME_H264(1) h264_frame;
 } VideoStreamingInterfaceDescriptor;
 
 static VideoStreamingInterfaceDescriptor VSIfaceDescriptor;
@@ -133,8 +134,8 @@ Result UsbVideoInitialize(UsbInterface* VideoStream, UsbInterface* ControlStream
 			.bmaControls = {{0}},
 		},
 		// 3.1.1 H.264 Video Format Descriptor (USB_Video_Payload_H264_1.5)
-		.h264_payload = {
-			.bLength = sizeof(VSIfaceDescriptor.h264_payload),
+		.h264_format = {
+			.bLength = sizeof(VSIfaceDescriptor.h264_format),
 			.bDescriptorType = USB_DT_CS_INTERFACE,
 			.bDescriptorSubType = UVC_VS_FORMAT_H264,
 			.bFormatIndex = 0,
@@ -145,9 +146,8 @@ Result UsbVideoInitialize(UsbInterface* VideoStream, UsbInterface* ControlStream
 			.bmSupportedSyncFrameTypes = 0, //todo (?)
 			.bResolutionScaling = 0,
 			.Reserved1 = 0,
-			///
 			.bmSupportedRateControlModes = 0,
-			.wMaxMBperSecOneResNoScalability = 1,
+			.wMaxMBperSecOneResNoScalability = 0,
 			.wMaxMBperSecTwoResNoScalability = 0,
 			.wMaxMBperSecThreeResNoScalability = 0,
 			.wMaxMBperSecFourResNoScalability = 0,
@@ -167,19 +167,44 @@ Result UsbVideoInitialize(UsbInterface* VideoStream, UsbInterface* ControlStream
 			.wMaxMBperSecTwoResFullScalability = 0,
 			.wMaxMBperSecThreeResFullScalability = 0,
 			.wMaxMBperSecFourResFullScalability = 0
+		},
+		// 3.1.2 H.264Video Frame Descriptors (USB_Video_Payload_H264_1.5)
+		.h264_frame = {
+			.bLength = sizeof(VSIfaceDescriptor.h264_frame),
+			.bDescriptorType = USB_DT_CS_INTERFACE,
+			.bDescriptorSubType = UVC_VS_FRAME_H264,
+			.bFrameIndex = 0,
+			.wWidth = 1280,
+			.wHeight = 720,
+			.wSARwidth = 1,
+			.wSARheight = 1,
+			.wProfile = 0x640c, //First two bytes of sps
+			.bLevelIDC = 32, //from sps
+			.wConstrainedToolset = 0,
+			.bmSupportedUsages = 0x70003, //todo(?) 
+			.bmCapabilities = 0x47, //Constant frame rate
+			.bmSVCCapabilities = 0,	// todo(?)
+			.bmMVCCapabilities = 0, // todo(?)
+			.dwMinBitRate = 8,
+			.dwMaxBitRate = 0x61A800, //800 KB/s
+			.dwDefaultFrameInterval = 333333, //30fps
+			.bNumFrameIntervals = 1,
+			.dwFrameInterval = {333333}
 		}
 	};
 
+	// 3.10.1.2 Standard VS Bulk Video Data Endpoint Descriptor
 	StreamingEndpoint = (struct usb_endpoint_descriptor){
 		.bLength = USB_DT_ENDPOINT_SIZE,
 		.bDescriptorType = USB_DT_ENDPOINT,
-		.bEndpointAddress = USB_ENDPOINT_OUT | 2,
+		.bEndpointAddress = USB_ENDPOINT_IN | 2,
 		.bmAttributes = USB_TRANSFER_TYPE_BULK,
 		.wMaxPacketSize = 0x200,
+		.bInterval = 0
 	};
 
 	ControlStream->interface = CONTROL_INTERFACE;
-	ControlStream->ReadEP = 0;
+	//ControlStream->ReadEP = 0; TODO: the control endpoint has a specific UsbDs call, don't return a UsbInterface
 
 	VideoStream->interface = STREAM_INTERFACE;
 	VideoStream->WriteEP = 0;
@@ -187,23 +212,15 @@ Result UsbVideoInitialize(UsbInterface* VideoStream, UsbInterface* ControlStream
 	UsbInterfaceDesc interfaces[2] = {0};
 
 	interfaces[CONTROL_INTERFACE].interface_desc = &ControlInterface;
-	interfaces[CONTROL_INTERFACE].endpoint_desc[0] = &ControlEndpoint;
 	interfaces[CONTROL_INTERFACE].string_descriptor = "Control";
-	interfaces[CONTROL_INTERFACE].ExtraDescriptors.Addr = &video_control_descriptors;
-	interfaces[CONTROL_INTERFACE].ExtraDescriptors.Len = sizeof(video_control_descriptors);
-
-	ExtraData interruptDescriptor = {
-		.Addr = &video_control_specific_interrupt_endpoint_descriptor,
-		.Len = sizeof(video_control_specific_interrupt_endpoint_descriptor)
-	};
-	interfaces[CONTROL_INTERFACE].ExtraEndpointDescriptors = &interruptDescriptor;
+	interfaces[CONTROL_INTERFACE].ExtraDescriptors.Addr = &VCIfaceDescriptor;
+	interfaces[CONTROL_INTERFACE].ExtraDescriptors.Len = sizeof(VCIfaceDescriptor);
 
 	interfaces[STREAM_INTERFACE].interface_desc = &StreamingInterface;
 	interfaces[STREAM_INTERFACE].endpoint_desc[0] = &StreamingEndpoint;
 	interfaces[STREAM_INTERFACE].string_descriptor = "Stream";
-	interfaces[STREAM_INTERFACE].ExtraDescriptors.Addr = &video_streaming_descriptors;
-	interfaces[STREAM_INTERFACE].ExtraDescriptors.Len = sizeof(video_streaming_descriptors);
-	interfaces[STREAM_INTERFACE].ExtraEndpointDescriptors = NULL;
+	interfaces[STREAM_INTERFACE].ExtraDescriptors.Addr = &VSIfaceDescriptor;
+	interfaces[STREAM_INTERFACE].ExtraDescriptors.Len = sizeof(VSIfaceDescriptor);
 
-	return usbSerialInitialize(&device_descriptor, 2, &interfaces);
+	return UsbCommsInitialize(&device_descriptor, 2, &interfaces);
 }

@@ -267,98 +267,6 @@ struct uvc_camera_terminal_descriptor {
 
 #define UVC_DT_CAMERA_TERMINAL_SIZE(n)			(15+(n))
 
-/* 3.7.2.4. Selector Unit Descriptor */
-//struct uvc_selector_unit_descriptor {
-//	__u8  bLength;
-//	__u8  bDescriptorType;
-//	__u8  bDescriptorSubType;
-//	__u8  bUnitID;
-//	__u8  bNrInPins;
-//	__u8  baSourceID[0];
-//	__u8  iSelector;
-//} __attribute__((__packed__));
-
-#define UVC_DT_SELECTOR_UNIT_SIZE(n)			(6+(n))
-
-#define UVC_SELECTOR_UNIT_DESCRIPTOR(n)	\
-	uvc_selector_unit_descriptor_##n
-
-#define DECLARE_UVC_SELECTOR_UNIT_DESCRIPTOR(n)	\
-struct UVC_SELECTOR_UNIT_DESCRIPTOR(n) {		\
-	__u8  bLength;					\
-	__u8  bDescriptorType;				\
-	__u8  bDescriptorSubType;			\
-	__u8  bUnitID;					\
-	__u8  bNrInPins;				\
-	__u8  baSourceID[n];				\
-	__u8  iSelector;				\
-} __attribute__((__packed__))
-
-/* 3.7.2.5. Processing Unit Descriptor */
-struct uvc_processing_unit_descriptor {
-	__u8  bLength;
-	__u8  bDescriptorType;
-	__u8  bDescriptorSubType;
-	__u8  bUnitID;
-	__u8  bSourceID;
-	__u16 wMaxMultiplier;
-	__u8  bControlSize;
-	__u8  bmControls[2];
-	__u8  iProcessing;
-} __attribute__((__packed__));
-
-struct uvc_processing_unit_descriptor_uvc_1_1 {
-	__u8  bLength;
-	__u8  bDescriptorType;
-	__u8  bDescriptorSubType;
-	__u8  bUnitID;
-	__u8  bSourceID;
-	__u16 wMaxMultiplier;
-	__u8  bControlSize;
-	__u8  bmControls[2];
-	__u8  iProcessing;
-	__u8  bmVideoStandards;
-} __attribute__((__packed__));
-
-#define UVC_DT_PROCESSING_UNIT_SIZE(n)			(9+(n))
-
-#define UVC_DT_PROCESSING_UNIT_UVC_1_1_SIZE(n)		(10+(n))
-
-///* 3.7.2.6. Extension Unit Descriptor */
-//struct uvc_extension_unit_descriptor {
-//	__u8  bLength;
-//	__u8  bDescriptorType;
-//	__u8  bDescriptorSubType;
-//	__u8  bUnitID;
-//	__u8  guidExtensionCode[16];
-//	__u8  bNumControls;
-//	__u8  bNrInPins;
-//	__u8  baSourceID[0];
-//	__u8  bControlSize;
-//	__u8  bmControls[0];
-//	__u8  iExtension;
-//} __attribute__((__packed__));
-
-#define UVC_DT_EXTENSION_UNIT_SIZE(p, n)		(24+(p)+(n))
-
-#define UVC_EXTENSION_UNIT_DESCRIPTOR(p, n) \
-	uvc_extension_unit_descriptor_##p_##n
-
-#define DECLARE_UVC_EXTENSION_UNIT_DESCRIPTOR(p, n)	\
-struct UVC_EXTENSION_UNIT_DESCRIPTOR(p, n) {		\
-	__u8  bLength;					\
-	__u8  bDescriptorType;				\
-	__u8  bDescriptorSubType;			\
-	__u8  bUnitID;					\
-	__u8  guidExtensionCode[16];			\
-	__u8  bNumControls;				\
-	__u8  bNrInPins;				\
-	__u8  baSourceID[p];				\
-	__u8  bControlSize;				\
-	__u8  bmControls[n];				\
-	__u8  iExtension;				\
-} __attribute__ ((__packed__))
-
 /* 3.8.2.2. Video Control Interrupt Endpoint Descriptor */
 struct uvc_control_endpoint_descriptor {
 	__u8  bLength;
@@ -439,18 +347,6 @@ struct UVC_OUTPUT_HEADER_DESCRIPTOR(n, p) {		\
 	__u8  bmaControls[p][n];			\
 } __attribute__ ((__packed__))
 
-/* 3.9.2.6. Color matching descriptor */
-struct uvc_color_matching_descriptor {
-	__u8  bLength;
-	__u8  bDescriptorType;
-	__u8  bDescriptorSubType;
-	__u8  bColorPrimaries;
-	__u8  bTransferCharacteristics;
-	__u8  bMatrixCoefficients;
-} __attribute__((__packed__));
-
-#define UVC_DT_COLOR_MATCHING_SIZE			6
-
 /* 4.3.1.1. Video Probe and Commit Controls */
 struct uvc_streaming_control {
 	__u16 bmHint;
@@ -470,120 +366,6 @@ struct uvc_streaming_control {
 	__u8  bMinVersion;
 	__u8  bMaxVersion;
 } __attribute__((__packed__));
-
-/* Uncompressed Payload - 3.1.1. Uncompressed Video Format Descriptor */
-struct uvc_format_uncompressed {
-	__u8  bLength;
-	__u8  bDescriptorType;
-	__u8  bDescriptorSubType;
-	__u8  bFormatIndex;
-	__u8  bNumFrameDescriptors;
-	__u8  guidFormat[16];
-	__u8  bBitsPerPixel;
-	__u8  bDefaultFrameIndex;
-	__u8  bAspectRatioX;
-	__u8  bAspectRatioY;
-	__u8  bmInterfaceFlags;
-	__u8  bCopyProtect;
-} __attribute__((__packed__));
-
-#define UVC_DT_FORMAT_UNCOMPRESSED_SIZE			27
-
-/* Uncompressed Payload - 3.1.2. Uncompressed Video Frame Descriptor */
-struct uvc_frame_uncompressed {
-	__u8  bLength;
-	__u8  bDescriptorType;
-	__u8  bDescriptorSubType;
-	__u8  bFrameIndex;
-	__u8  bmCapabilities;
-	__u16 wWidth;
-	__u16 wHeight;
-	__u32 dwMinBitRate;
-	__u32 dwMaxBitRate;
-	__u32 dwMaxVideoFrameBufferSize;
-	__u32 dwDefaultFrameInterval;
-	__u8  bFrameIntervalType;
-	__u32 dwFrameInterval[];
-} __attribute__((__packed__));
-
-#define UVC_DT_FRAME_UNCOMPRESSED_SIZE(n)		(26+4*(n))
-
-#define UVC_FRAME_UNCOMPRESSED(n) \
-	uvc_frame_uncompressed_##n
-
-#define DECLARE_UVC_FRAME_UNCOMPRESSED(n)		\
-struct UVC_FRAME_UNCOMPRESSED(n) {			\
-	__u8  bLength;					\
-	__u8  bDescriptorType;				\
-	__u8  bDescriptorSubType;			\
-	__u8  bFrameIndex;				\
-	__u8  bmCapabilities;				\
-	__u16 wWidth;					\
-	__u16 wHeight;					\
-	__u32 dwMinBitRate;				\
-	__u32 dwMaxBitRate;				\
-	__u32 dwMaxVideoFrameBufferSize;		\
-	__u32 dwDefaultFrameInterval;			\
-	__u8  bFrameIntervalType;			\
-	__u32 dwFrameInterval[n];			\
-} __attribute__((__packed__))
-
-/* MJPEG Payload - 3.1.1. MJPEG Video Format Descriptor */
-struct uvc_format_mjpeg {
-	__u8  bLength;
-	__u8  bDescriptorType;
-	__u8  bDescriptorSubType;
-	__u8  bFormatIndex;
-	__u8  bNumFrameDescriptors;
-	__u8  bmFlags;
-	__u8  bDefaultFrameIndex;
-	__u8  bAspectRatioX;
-	__u8  bAspectRatioY;
-	__u8  bmInterfaceFlags;
-	__u8  bCopyProtect;
-} __attribute__((__packed__));
-
-#define UVC_DT_FORMAT_MJPEG_SIZE			11
-
-/* MJPEG Payload - 3.1.2. MJPEG Video Frame Descriptor */
-struct uvc_frame_mjpeg {
-	__u8  bLength;
-	__u8  bDescriptorType;
-	__u8  bDescriptorSubType;
-	__u8  bFrameIndex;
-	__u8  bmCapabilities;
-	__u16 wWidth;
-	__u16 wHeight;
-	__u32 dwMinBitRate;
-	__u32 dwMaxBitRate;
-	__u32 dwMaxVideoFrameBufferSize;
-	__u32 dwDefaultFrameInterval;
-	__u8  bFrameIntervalType;
-	__u32 dwFrameInterval[];
-} __attribute__((__packed__));
-
-#define UVC_DT_FRAME_MJPEG_SIZE(n)			(26+4*(n))
-
-#define UVC_FRAME_MJPEG(n) \
-	uvc_frame_mjpeg_##n
-
-#define DECLARE_UVC_FRAME_MJPEG(n)			\
-struct UVC_FRAME_MJPEG(n) {				\
-	__u8  bLength;					\
-	__u8  bDescriptorType;				\
-	__u8  bDescriptorSubType;			\
-	__u8  bFrameIndex;				\
-	__u8  bmCapabilities;				\
-	__u16 wWidth;					\
-	__u16 wHeight;					\
-	__u32 dwMinBitRate;				\
-	__u32 dwMaxBitRate;				\
-	__u32 dwMaxVideoFrameBufferSize;		\
-	__u32 dwDefaultFrameInterval;			\
-	__u8  bFrameIntervalType;			\
-	__u32 dwFrameInterval[n];			\
-} __attribute__((__packed__))
-
 
 #define UVC_VS_FORMAT_H264	0x13
 #define UVC_VS_FRAME_H264	0x14
@@ -624,6 +406,60 @@ struct uvc_format_h264 {
 	__u16 wMaxMBperSecFourResFullScalability;
 } __attribute__((__packed__));
 
+
+/* H264 Payload - 3.1.2. H264 Video Frame Descriptor */
+struct uvc_frame_h264 {
+	__u8  bLength;
+	__u8  bDescriptorType;
+	__u8  bDescriptorSubType;
+	__u8  bFrameIndex;
+	__u16 wWidth;
+	__u16 wHeight;
+	__u16 wSARwidth;
+	__u16 wSARheight;
+	__u16 wProfile;
+	__u8  bLevelIDC;
+	__u16 wConstrainedToolset;
+	__u32 bmSupportedUsages;
+	__u16 bmCapabilities;
+	__u32 bmSVCCapabilities;
+	__u32 bmMVCCapabilities;
+	__u32 dwMinBitRate;
+	__u32 dwMaxBitRate;
+	__u32 dwDefaultFrameInterval;
+	__u8  bNumFrameIntervals;
+	__u32 dwFrameInterval[];
+} __attribute__((__packed__));
+
+#define UVC_DT_FRAME_H264_SIZE(n)	(44+4*(n))
+
+#define UVC_FRAME_H264(n) \
+	uvc_frame_h264_##n
+
+#define DECLARE_UVC_FRAME_H264(n)		\
+struct UVC_FRAME_H264(n) {				\
+		__u8  bLength;					\
+		__u8  bDescriptorType;			\
+		__u8  bDescriptorSubType;		\
+		__u8  bFrameIndex;				\
+		__u16 wWidth;					\
+		__u16 wHeight;					\
+		__u16 wSARwidth;				\
+		__u16 wSARheight;				\
+		__u16 wProfile;					\
+		__u8  bLevelIDC;				\
+		__u16 wConstrainedToolset;		\
+		__u32 bmSupportedUsages;		\
+		__u16 bmCapabilities;			\
+		__u32 bmSVCCapabilities;		\
+		__u32 bmMVCCapabilities;		\
+		__u32 dwMinBitRate;				\
+		__u32 dwMaxBitRate;				\
+		__u32 dwDefaultFrameInterval;	\
+		__u8  bNumFrameIntervals;		\
+		__u32 dwFrameInterval[n];		\
+} __attribute__((packed))
+
 /*
  * Copied from https://github.com/torvalds/linux/blob/master/drivers/media/usb/uvc/uvcvideo.h
  */
@@ -647,102 +483,7 @@ struct uvc_format_h264 {
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
 	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x02}
 
-#define UVC_GUID_FORMAT_MJPEG \
-	{ 'M',  'J',  'P',  'G', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_YUY2 \
-	{ 'Y',  'U',  'Y',  '2', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_YUY2_ISIGHT \
-	{ 'Y',  'U',  'Y',  '2', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0x00, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_NV12 \
-	{ 'N',  'V',  '1',  '2', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_YV12 \
-	{ 'Y',  'V',  '1',  '2', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_I420 \
-	{ 'I',  '4',  '2',  '0', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_UYVY \
-	{ 'U',  'Y',  'V',  'Y', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_Y800 \
-	{ 'Y',  '8',  '0',  '0', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_Y8 \
-	{ 'Y',  '8',  ' ',  ' ', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_Y10 \
-	{ 'Y',  '1',  '0',  ' ', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_Y12 \
-	{ 'Y',  '1',  '2',  ' ', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_Y16 \
-	{ 'Y',  '1',  '6',  ' ', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_BY8 \
-	{ 'B',  'Y',  '8',  ' ', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_BA81 \
-	{ 'B',  'A',  '8',  '1', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_GBRG \
-	{ 'G',  'B',  'R',  'G', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_GRBG \
-	{ 'G',  'R',  'B',  'G', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_RGGB \
-	{ 'R',  'G',  'G',  'B', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_BG16 \
-	{ 'B',  'G',  '1',  '6', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_GB16 \
-	{ 'G',  'B',  '1',  '6', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_RG16 \
-	{ 'R',  'G',  '1',  '6', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_GR16 \
-	{ 'G',  'R',  '1',  '6', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_RGBP \
-	{ 'R',  'G',  'B',  'P', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_BGR3 \
-	{ 0x7d, 0xeb, 0x36, 0xe4, 0x4f, 0x52, 0xce, 0x11, \
-	 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70}
-#define UVC_GUID_FORMAT_M420 \
-	{ 'M',  '4',  '2',  '0', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-
 #define UVC_GUID_FORMAT_H264 \
 	{ 'H',  '2',  '6',  '4', 0x00, 0x00, 0x10, 0x00, \
 	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_Y8I \
-	{ 'Y',  '8',  'I',  ' ', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_Y12I \
-	{ 'Y',  '1',  '2',  'I', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_Z16 \
-	{ 'Z',  '1',  '6',  ' ', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_RW10 \
-	{ 'R',  'W',  '1',  '0', 0x00, 0x00, 0x10, 0x00, \
-	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-#define UVC_GUID_FORMAT_INVZ \
-	{ 'I',  'N',  'V',  'Z', 0x90, 0x2d, 0x58, 0x4a, \
-	 0x92, 0x0b, 0x77, 0x3f, 0x1f, 0x2c, 0x55, 0x6b}
-#define UVC_GUID_FORMAT_INZI \
-	{ 'I',  'N',  'Z',  'I', 0x66, 0x1a, 0x42, 0xa2, \
-	 0x90, 0x65, 0xd0, 0x18, 0x14, 0xa8, 0xef, 0x8a}
-#define UVC_GUID_FORMAT_INVI \
-	{ 'I',  'N',  'V',  'I', 0xdb, 0x57, 0x49, 0x5e, \
-	 0x8e, 0x3f, 0xf4, 0x79, 0x53, 0x2b, 0x94, 0x6f}
-
 #endif
