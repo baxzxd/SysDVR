@@ -1,7 +1,6 @@
 #include "VideoDev.h"
 #include "uvc.h"
 
-#define FRAME_BITRATE(w, h, bpp, interval)	(((w) * (h) * (bpp)) / ((interval) * 100 * 1E-9))
 #define FPS_TO_INTERVAL(fps)			((1E9 / 100) / (fps))
 
 #define CONTROL_INTERFACE 		0
@@ -187,9 +186,9 @@ Result UsbVideoInitialize(UsbInterface* VideoStream, UsbInterface* ControlStream
 			.bmMVCCapabilities = 0, // todo(?)
 			.dwMinBitRate = 8,
 			.dwMaxBitRate = 0x61A800, //800 KB/s
-			.dwDefaultFrameInterval = 333333, //30fps
+			.dwDefaultFrameInterval = FPS_TO_INTERVAL(30),
 			.bNumFrameIntervals = 1,
-			.dwFrameInterval = {333333}
+			.dwFrameInterval = { FPS_TO_INTERVAL(30) }
 		}
 	};
 
